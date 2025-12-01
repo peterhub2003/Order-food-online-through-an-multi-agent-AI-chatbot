@@ -14,14 +14,6 @@ logger = get_logger("tools_utils")
 
 
 async def load_tools(session: Any) -> Tuple[List[BaseTool], Dict[str, BaseTool], float]:
-    """Load MCP tools from a session and return LangChain tools.
-
-    Returns (tools, tool_map, elapsed_seconds), where:
-    - tools: list of LangChain ``BaseTool`` instances suitable for
-      ``ChatOpenAI.bind_tools``.
-    - tool_map: mapping from tool name to tool instance for direct invocation.
-    - elapsed_seconds: time spent loading tools from the MCP server.
-    """
 
     start = time.perf_counter()
     tools: List[BaseTool] = await load_mcp_tools(session)
@@ -37,11 +29,7 @@ async def invoke_tool(
     args: Dict[str, Any],
     tool_context: Dict[str, Any] | None = None,
 ) -> Any:
-    """Invoke a LangChain tool with timeout and basic retry.
 
-    Any exceptions are logged and, after exhausting retries, a string
-    describing the error is returned so the model can handle it.
-    """
 
     last_error: Exception | None = None
     merged_args: Dict[str, Any] = dict(args)

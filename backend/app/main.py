@@ -9,11 +9,7 @@ from .routers import auth, faq, menu, orders, users
 
 
 def init_db() -> None:
-    """Create database tables if they do not already exist.
 
-    In a real production setup you would use migrations instead, but for this
-    prototype service, automatic table creation keeps things simple.
-    """
 
     Base.metadata.create_all(bind=engine)
 
@@ -29,14 +25,14 @@ origins = [
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,       # Cho phép các nguồn này gọi API
-    allow_credentials=True,      # Cho phép gửi cookie/token
-    allow_methods=["*"],         # Quan trọng: Cho phép tất cả method (gồm OPTIONS, POST...)
-    allow_headers=["*"],         # Cho phép tất cả header
+    allow_origins=origins,       
+    allow_credentials=True,      
+    allow_methods=["*"],         
+    allow_headers=["*"],        
 )
 
 @app.on_event("startup")
-async def on_startup() -> None:  # type: ignore[override]
+async def on_startup() -> None:  
     init_db()
 
 

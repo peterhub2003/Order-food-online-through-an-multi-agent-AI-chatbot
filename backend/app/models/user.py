@@ -8,12 +8,7 @@ from ..db import Base
 
 
 class User(Base):
-    """Application user.
 
-    This is intentionally minimal: you can later plug in a real auth system
-    (OAuth2, JWT, etc.). For now it provides a stable identity so that orders
-    can be tied to individual users instead of anonymous sessions.
-    """
 
     __tablename__ = "users"
 

@@ -18,7 +18,6 @@ class AgentLogger:
         """Log khi một Agent bắt đầu chạy"""
         tree = Tree(f"[bold green]🤖 Agent Active: {agent_name}[/bold green]")
         
-        # In state đầu vào (rút gọn messages để đỡ dài)
         input_data = state.copy()
         if "messages" in input_data:
             input_data["messages"] = f"[{len(input_data['messages'])} messages history]"
@@ -30,7 +29,6 @@ class AgentLogger:
     @staticmethod
     def log_planner_decision(decision: Any):
         """Log quyết định của Orchestrator"""
-        # decision là object Pydantic hoặc dict
         data = decision.dict() if hasattr(decision, "dict") else decision
         
         panel = Panel(
@@ -51,7 +49,6 @@ class AgentLogger:
     @staticmethod
     def log_tool_result(tool_name: str, result: Any):
         """Log kết quả trả về từ tool"""
-        # Nếu result là dict/json lớn, in đẹp. Nếu ngắn, in dòng.
         try:
             if isinstance(result, (dict, list)):
                 res_str = JSON.from_data(result)

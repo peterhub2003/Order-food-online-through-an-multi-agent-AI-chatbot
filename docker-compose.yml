@@ -41,19 +41,6 @@ services:
     networks:
       - backend
 
-  # db-multi-agent:
-  #   image: postgres:16-alpine
-  #   container_name: db-multi-agent
-  #   restart: unless-stopped
-  #   env_file:
-  #     - .env
-  #   ports:
-  #     - "5432:5432"
-  #   volumes:
-  #     - multi_agent_postgres_data:/var/lib/postgresql/data
-  #   networks:
-  #     - backend
-
   db:
     image: postgres:15
     restart: unless-stopped
@@ -102,7 +89,7 @@ services:
     container_name: dozzle
     restart: unless-stopped
     ports:
-      - "9999:8080"       # UI at http://localhost:9999
+      - "9999:8080"      
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     networks:

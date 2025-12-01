@@ -46,7 +46,7 @@ def _load_order_relations(order: Order) -> None:
 @router.post("/orders/draft", response_model=OrderOut)
 async def create_draft_order(
     payload: OrderCreateDraftIn,
-    db: Session = Depends(get_db),  # noqa: B008
+    db: Session = Depends(get_db),  
     current_user: User = Depends(get_current_user),
 ) -> OrderOut:
     order = Order(
@@ -86,7 +86,7 @@ async def get_order_history(
 @router.get("/orders/{order_id}", response_model=OrderOut)
 async def get_order(
     order_id: int,
-    db: Session = Depends(get_db),  # noqa: B008
+    db: Session = Depends(get_db),  
     current_user: User = Depends(get_current_user),
 ) -> OrderOut:
     order = _get_order_or_404(db, order_id, current_user)
@@ -110,7 +110,7 @@ def _recalculate_prices(
 async def add_item_to_order(
     order_id: int,
     payload: OrderAddItemIn,
-    db: Session = Depends(get_db),  # noqa: B008
+    db: Session = Depends(get_db), 
     current_user: User = Depends(get_current_user),
 ) -> OrderOut:
     order = _get_order_or_404(db, order_id, current_user)
@@ -169,7 +169,7 @@ async def update_order_item(
     order_id: int,
     order_item_id: int,
     payload: OrderUpdateItemIn,
-    db: Session = Depends(get_db),  # noqa: B008
+    db: Session = Depends(get_db),  
     current_user: User = Depends(get_current_user),
 ) -> OrderOut:
     order = _get_order_or_404(db, order_id, current_user)

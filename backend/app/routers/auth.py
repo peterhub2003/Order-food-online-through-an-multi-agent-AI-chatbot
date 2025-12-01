@@ -14,16 +14,13 @@ router = APIRouter(tags=["auth"])
 
 
 def _hash_password(password: str) -> str:
-    """Hash a plaintext password using a simple SHA-256 digest.
 
-    This keeps the example dependency-free while avoiding storing raw passwords.
-    """
 
     return hashlib.sha256(password.encode("utf-8")).hexdigest()
 
 
 def _verify_password(plain_password: str, hashed_password: str) -> bool:
-    """Verify a plaintext password against its stored hash."""
+
 
     return _hash_password(plain_password) == hashed_password
 
@@ -56,7 +53,6 @@ async def register(
     payload: RegisterRequest,
     db: Session = Depends(get_db),
 ) -> dict[str, str]:
-    # Check for duplicate email to provide a clear error message
     existing = db.query(User).filter(User.email == payload.email).first()
     if existing is not None:
         raise HTTPException(
@@ -64,7 +60,6 @@ async def register(
             detail="Email already registered",
         )
 
-    # Store only a hashed password, not the plaintext
     hashed_password = _hash_password(payload.password)
     user = User(email=payload.email, hashed_password=hashed_password)
     db.add(user)

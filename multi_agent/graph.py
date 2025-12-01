@@ -20,7 +20,6 @@ from typing import Optional, List
 
 
 def update_cart(current_cart: List[dict], new_items: Optional[List[CartItem]]) -> List[dict]:
-    """Cập nhật giỏ hàng: Thêm món mới hoặc điền ID cho món cũ."""
     if not current_cart:
         current_cart = []
     
@@ -30,36 +29,29 @@ def update_cart(current_cart: List[dict], new_items: Optional[List[CartItem]]) -
     updated_cart = [item for item in current_cart]
     
     for new_item in new_items:
-        # Chuyển Pydantic thành dict
         new_item_dict = new_item.dict()
         
-        # Logic 1: Cập nhật ID (Mapping)
-        # Nếu trong cart đã có món cùng tên nhưng chưa có ID, mà new_item có ID -> Update
+
         found = False
         for existing_item in updated_cart:
-            # So sánh tên tương đối (lowercase)
             if existing_item['item_name'].lower() in new_item_dict['item_name'].lower() or \
                new_item_dict['item_name'].lower() in existing_item['item_name'].lower():
                 
-                # Nếu món mới có ID, cập nhật cho món cũ
                 if new_item_dict.get('item_id'):
                     existing_item['item_id'] = new_item_dict['item_id']
                 
-                # Nếu món mới có số lượng khác mặc định và món cũ chưa có -> update
                 if new_item_dict['quantity'] != 1: 
                      existing_item['quantity'] = new_item_dict['quantity']
                      
                 found = True
                 break
         
-        # Logic 2: Thêm món mới (nếu chưa tồn tại)
         if not found:
             updated_cart.append(new_item_dict)
             
     return updated_cart
 
 def extract_json_from_text(text: str) -> dict:
-    """Tìm và parse JSON block từ phản hồi của Tool Agent."""
     try:
         if match:
             json_str = match.group(1).strip()
@@ -119,7 +111,6 @@ async def orchestrator_node(state: AgentState):
         decision: OrchestratorDecision = await structured_llm.ainvoke(messages)
     except Exception as e:
         #logger.error(f"Orchestrator Error: {e}")
-        # Fallback an toàn
         return {
             "next_step": "synthesis_agent",
             "next_action": "finish",
@@ -129,7 +120,6 @@ async def orchestrator_node(state: AgentState):
             "task_outputs": task_outputs
         }
 
-    # decision: OrchestratorDecision = await structured_llm.ainvoke(messages)
     AgentLogger.log_planner_decision(decision)
 
     new_info = decision.extracted_info
@@ -241,8 +231,7 @@ async def tool_agent_node(state: AgentState, config: RunnableConfig):
             AgentLogger.log_tool_result(tool_name, output)
             tool_results_str += f"- Action: {tool_name}\n- Result: {output}\n"
         
-        # 5. (Quan trọng) Gọi lại LLM để tổng hợp kết quả như Prompt yêu cầu
-        # "Sau khi sử dụng công cụ, hãy cung cấp một bản tóm tắt..."
+
         summary_messages = messages + [
             ai_msg,
             ToolMessage(content=tool_results_str, tool_call_id=ai_msg.tool_calls[0]["id"])
@@ -256,7 +245,6 @@ async def tool_agent_node(state: AgentState, config: RunnableConfig):
             "check_user_info": CheckUserOutput
         }
 
-        # target_schema = schema_map.get(current_action, GenericOutput)
 
         try:
             structured_summary_llm = llm.with_structured_output(target_schema)
@@ -264,12 +252,9 @@ async def tool_agent_node(state: AgentState, config: RunnableConfig):
             extracted_data = final_output_obj.dict()
             
         except Exception as e:
-            #logger.error(f"Structured Output Error: {e}")
-            # Fallback nếu LLM không thể map vào schema
             extracted_data = {"error": "Failed to structure output", "raw": tool_results_str}
 
     else:
-        # Trường hợp không gọi tool nào
         extracted_data = {"status": "no_tool_called", "reason": ai_msg.content}
     
 

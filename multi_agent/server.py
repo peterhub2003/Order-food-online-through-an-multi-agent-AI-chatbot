@@ -30,14 +30,9 @@ mcp_client = MultiServerMCPClient(
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """
-    Hàm này chạy khi Server bắt đầu (trước yield) 
-    và khi Server tắt (sau yield).
-    """
+
     print(f"🔌 Connecting to MCP Server via {MCP_SERVER_URL}...")
-    
-    # Bắt đầu kết nối. Lệnh 'async with' sẽ giữ kết nối mở cho đến khi thoát block.
-    # MultiServerMCPClient khi enter sẽ trả về bản thân nó hoặc context
+
     async with mcp_client.session(MCP_SERVER_ID) as client_context:
 
         

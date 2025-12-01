@@ -14,7 +14,6 @@ const generateSessionId = () => {
 
 const Spinner = () => <Loader2 className="w-5 h-5 animate-spin" />;
 
-// --- MAIN COMPONENT ---
 export default function App() {
   const [userToken, setUserToken] = useState(localStorage.getItem('access_token'));
   const [view, setView] = useState(userToken ? 'chat' : 'login');
@@ -28,7 +27,6 @@ export default function App() {
   
   const messagesEndRef = useRef(null);
 
-  // Auto-scroll logic
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
@@ -66,7 +64,6 @@ export default function App() {
     const userMsgText = inputText;
     setInputText(''); // Clear input
 
-    // Optimistic UI Update
     const newUserMsg = { id: Date.now(), sender: 'user', text: userMsgText };
     setMessages(prev => [...prev, newUserMsg]);
     setIsSending(true);
@@ -76,7 +73,7 @@ export default function App() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${userToken}` // Gửi token JWT
+          'Authorization': `Bearer ${userToken}`
         },
         body: JSON.stringify({
           message: userMsgText,

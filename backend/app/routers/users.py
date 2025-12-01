@@ -14,7 +14,7 @@ router = APIRouter(tags=["users"])
 
 
 @router.post("/users", response_model=UserOut)
-async def create_user(payload: UserCreateIn, db: Session = Depends(get_db)) -> UserOut:  # noqa: B008
+async def create_user(payload: UserCreateIn, db: Session = Depends(get_db)) -> UserOut:  
     existing = db.query(User).filter(User.email == payload.email).first()
     if existing is not None:
         raise HTTPException(status_code=400, detail="Email already registered")
@@ -35,7 +35,7 @@ async def create_user(payload: UserCreateIn, db: Session = Depends(get_db)) -> U
 async def list_users(
     limit: int = Query(default=10, ge=1, le=100),
     skip: int = Query(default=0, ge=0),
-    db: Session = Depends(get_db),  # noqa: B008
+    db: Session = Depends(get_db), 
 ) -> List[UserOut]:
     users = (
         db.query(User)
@@ -48,7 +48,7 @@ async def list_users(
 
 
 @router.get("/users/{user_id}", response_model=UserOut)
-async def get_user(user_id: int, db: Session = Depends(get_db)) -> UserOut:  # noqa: B008
+async def get_user(user_id: int, db: Session = Depends(get_db)) -> UserOut:  
     user = db.query(User).filter(User.id == user_id).first()
     if user is None:
         raise HTTPException(status_code=404, detail="User not found")
@@ -59,7 +59,7 @@ async def get_user(user_id: int, db: Session = Depends(get_db)) -> UserOut:  # n
 async def update_user(
     user_id: int,
     payload: UserUpdateIn,
-    db: Session = Depends(get_db),  # noqa: B008
+    db: Session = Depends(get_db),  
 ) -> UserOut:
     user = db.query(User).filter(User.id == user_id).first()
     if user is None:
@@ -84,7 +84,7 @@ async def update_user(
 
 
 @router.delete("/users/{user_id}", response_model=UserOut)
-async def delete_user(user_id: int, db: Session = Depends(get_db)) -> UserOut:  # noqa: B008
+async def delete_user(user_id: int, db: Session = Depends(get_db)) -> UserOut:  
     user = db.query(User).filter(User.id == user_id).first()
     if user is None:
         raise HTTPException(status_code=404, detail="User not found")

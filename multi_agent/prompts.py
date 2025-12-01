@@ -14,7 +14,6 @@ class AgentPrompt:
     user_template: str
 
 
-# --- PLANNER / ORCHESTRATOR PROMPT (BRAIN: QUEUE + CART + LIFECYCLE) ---
 PLANNER_PROMPT = AgentPrompt(
     system=_env_or_default(
         "PLANNER_SYSTEM_PROMPT",
@@ -89,7 +88,7 @@ PLANNER_PROMPT = AgentPrompt(
 )
 
 
-# --- TOOL AGENT (STRUCTURED OUTPUT GENERATOR + CONTEXT AWARE) ---
+
 TOOL_AGENT_PROMPT = AgentPrompt(
     system=_env_or_default(
         "TOOL_AGENT_SYSTEM_PROMPT",
@@ -135,7 +134,7 @@ TOOL_AGENT_PROMPT = AgentPrompt(
 )
 
 
-# --- SYNTHESIS AGENT (CONTEXT AWARE & GROUNDED) ---
+
 SYNTHESIS_PROMPT = AgentPrompt(
     system=_env_or_default(
         "SYNTHESIS_SYSTEM_PROMPT",

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import os
 
-# Base model / MCP configuration
+
 OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://ollama:11434/v1")
 OLLAMA_API_KEY = os.getenv("OLLAMA_API_KEY", "ollama")
 MODEL_NAME = os.getenv("MODEL_NAME", "gpt-oss:20b")
@@ -20,7 +20,7 @@ REDIS_URL = os.getenv("REDIS_URL", "redis://redis:6379/0")
 REDIS_PREFIX = os.getenv("REDIS_PREFIX", "mcp_ollama:")
 
 
-# High-level system prompt
+
 SYSTEM_PROMPT = os.getenv(
     "SYSTEM_PROMPT",
     (

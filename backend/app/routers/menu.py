@@ -119,7 +119,6 @@ async def delete_menu_item(item_id: int, db: Session = Depends(get_db)) -> MenuI
     if item is None:
         raise HTTPException(status_code=404, detail="Menu item not found")
 
-    # Soft delete: mark as unavailable so existing order references remain valid.
     item.is_available = False
     db.commit()
     db.refresh(item)

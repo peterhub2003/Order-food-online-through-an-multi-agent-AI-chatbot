@@ -23,12 +23,7 @@ def create_tool_model(
     tool_choice: str | None = "auto",
     parallel_tool_calls: bool = True,
 ) -> ChatOpenAI:
-    """Create a ChatOpenAI model configured for tool calling via LangChain.
 
-    The returned model exposes `.invoke` / `.ainvoke` and will populate
-    `AIMessage.tool_calls` with a list of tool call dicts:
-    `{"name": str, "args": dict, "id": str}`.
-    """
 
     base = create_chat_model()
     return base.bind_tools(

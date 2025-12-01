@@ -51,16 +51,7 @@ def _configure_root_logger() -> None:
 
 
 def get_logger(name: str) -> logging.Logger:
-    """Return a logger configured for container-friendly stdout logging.
 
-    - Level is controlled via LOG_LEVEL env (default: INFO).
-    - Format is controlled via LOG_FORMAT env ("plain" or "json").
-    - Optional SERVICE_NAME env is included in the log output for grouping.
-
-    Services should call this helper instead of configuring logging themselves,
-    so that logs can be aggregated and monitored by external tools (Dozzle,
-    ELK, Loki, etc.) without coupling application code to any specific sink.
-    """
 
     _configure_root_logger()
     return logging.getLogger(name)

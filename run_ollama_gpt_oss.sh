@@ -3,8 +3,6 @@ set -euo pipefail
 
 MODEL_NAME="${1:-gpt-oss:20b}"
 
-# echo "[ollama] Starting container (CPU by default)..."
-# docker compose up -d ollama
 
 echo "[ollama] Waiting for API to be ready on http://localhost:11434 ..."
 until curl -sSf http://localhost:11434/api/tags >/dev/null 2>&1; do
