@@ -2,10 +2,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Send, User, Bot, LogOut, Loader2, Lock, Mail, MessageSquare, AlertCircle } from 'lucide-react';
 
 
-const AUTH_API_BASE = "https://8001-01kas5sbhxt86as81pvv02pm0s.cloudspaces.litng.ai"; 
+const AUTH_API_BASE = "http://localhost:8001"; 
 const LOGIN_ENDPOINT = `${AUTH_API_BASE}/api/auth/login`; 
 const REGISTER_ENDPOINT = `${AUTH_API_BASE}/api/auth/register`; 
-const CHAT_ENDPOINT = "https://8100-01kas5sbhxt86as81pvv02pm0s.cloudspaces.litng.ai/v1/chat";
+const CHAT_ENDPOINT = "http://localhost:8100/v1/chat";
 
 
 const generateSessionId = () => {
