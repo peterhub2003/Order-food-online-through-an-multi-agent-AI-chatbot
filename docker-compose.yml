@@ -1,0 +1,177 @@
+version: "3.9"
+
+services:
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    restart: unless-stopped
+    environment:
+      - MODEL_NAME=gpt-oss:20b
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama:/root/.ollama
+    networks:
+      - backend
+
+
+
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: ["redis-server", "--appendonly", "yes"]
+    networks:
+      - backend
+
+  redisinsight:
+    image: redis/redisinsight:latest
+    container_name: redisinsight
+    restart: unless-stopped
+    depends_on:
+      - redis
+    ports:
+      - "9001:5540"
+    volumes:
+      - redisinsight_data:/data
+    networks:
+      - backend
+
+  # db-multi-agent:
+  #   image: postgres:16-alpine
+  #   container_name: db-multi-agent
+  #   restart: unless-stopped
+  #   env_file:
+  #     - .env
+  #   ports:
+  #     - "5432:5432"
+  #   volumes:
+  #     - multi_agent_postgres_data:/var/lib/postgresql/data
+  #   networks:
+  #     - backend
+
+  db:
+    image: postgres:15
+    restart: unless-stopped
+    container_name: db
+    env_file:
+      - ./backend/.env
+    ports:
+      - "5433:5432"
+    volumes:
+      - backend_postgres_data:/var/lib/postgresql/data
+    networks:
+      - backend
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: backend
+    env_file:
+      - ./backend/.env
+    depends_on:
+      - db
+    ports:
+      - "8001:8000"
+    restart: unless-stopped
+    networks:
+      - backend
+
+  mcp-backend:
+    build:
+      context: ./mcp_backend
+    container_name: mcp-backend
+    restart: unless-stopped
+    environment:
+      - BACKEND_API_BASE_URL=http://backend:8000
+      - MCP_BACKEND_PORT=8000
+    depends_on:
+      - backend
+    ports:
+      - "8002:8000"
+    networks:
+      - backend
+
+  dozzle:
+    image: amir20/dozzle:latest
+    container_name: dozzle
+    restart: unless-stopped
+    ports:
+      - "9999:8080"       # UI at http://localhost:9999
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - backend
+    profiles:
+      - logs
+
+  multi-agent:
+    build:
+      context: .
+      dockerfile: Dockerfile.multi_agent
+    container_name: multi-agent
+    restart: unless-stopped
+    environment:
+      - OLLAMA_BASE_URL=http://ollama:11434/v1
+      - OLLAMA_API_KEY=ollama
+      - MODEL_NAME=gpt-oss:20b
+      - MCP_SERVER_ID=backend-tools
+      - MCP_SERVER_URL=http://mcp-backend:8000/mcp
+      - REDIS_URL=redis://redis:6379/0
+      - SERVICE_NAME=multi-agent
+      - LOG_LEVEL=INFO
+      - LOG_FORMAT=plain
+    depends_on:
+      - ollama
+      - redis
+      - backend
+      - mcp-backend
+    ports:
+      - "8100:8100"
+    networks:
+      - backend
+
+
+  pgadmin:
+      image: dpage/pgadmin4
+      restart: always
+      environment:
+        PGADMIN_DEFAULT_EMAIL: thangquangngo02@gmail.com
+        PGADMIN_DEFAULT_PASSWORD: admin
+      ports:
+        - "8080:80"
+      volumes:
+        - pgadmin_data:/var/lib/pgadmin
+      depends_on:
+        - db
+      networks:
+        - backend
+      profiles:
+        - monitor
+
+  frontend:
+    build: ./chat_ui
+    container_name: chatui
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    networks:
+      - backend
+
+volumes:
+  ollama:
+  redis_data:
+  redisinsight_data:
+  backend_postgres_data:
+  pgadmin_data:
+
+
+networks:
+  backend:
+    driver: bridge

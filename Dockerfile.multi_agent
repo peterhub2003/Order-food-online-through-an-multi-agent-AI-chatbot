@@ -1,0 +1,16 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+
+ENV PYTHONUNBUFFERED=1
+
+COPY ./multi_agent/multi_agent_requirements.txt ./
+RUN pip install --no-cache-dir --upgrade pip \
+    && pip install --no-cache-dir -r multi_agent_requirements.txt
+
+COPY multi_agent ./multi_agent
+COPY utils ./utils
+
+EXPOSE 8100
+
+CMD ["uvicorn", "multi_agent.server:app", "--host", "0.0.0.0", "--port", "8100"]
